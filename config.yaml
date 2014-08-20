@@ -1,0 +1,12 @@
+#
+#两个空格为一个缩进单位
+#
+using: tty0
+
+devices:
+  tty0:
+    device: /dev/tty.SLAB_USBtoUART
+    baudrate: 19200
+  tty1:
+    device: /dev/ttyu2
+    baudrate: 19200
