@@ -7,9 +7,10 @@ __desc__ = 'RFID for Python lib'
 
 import atexit,yaml
 from time import sleep
+import binascii
 
 
-
+DEBUG=False
 
 def get_config(key):
     cfg = yaml.load(file('pyrfid/config.yaml'))
@@ -25,17 +26,18 @@ def Serial(*args,**kwargs):
         if os.path.isfile(get_config('dev')):
             return True
     except Exception,e:
-        print e
+        if DEBUG:
+			print e
     try :
         dev_inst = serial.Serial(port=get_config('dev'),baudrate=get_config('baudrate'))
         return dev_inst
     except serial.SerialException,e:
-        print u'串口实例化错误,__init__.py:L29\n',e
+		if DEBUG:
+			print u'串口实例化错误,__init__.py:L29\n',e
 
 head = 'AA BB'
 key = 'ff ff ff ff ff ff'
 
-import binascii
 class mifares50(object):
     def __init__(self,dev_inst):
         self.dev = dev_inst
@@ -56,9 +58,11 @@ class mifares50(object):
                 msg_sum = int(str(dt.split(' ')[0]),16) ^ int(str(i),16)
             msg_sum = int(str(i),16) ^ int(msg_sum)
         if 'aa' in args:
-#             print 'Src:',args
+			if DEBUG:
+				print 'Src:',args
             args = str(args).replace('aa','aa 00')
-#             print 'Dst:',args
+			if DEBUG:
+				print 'Dst:',args
         if args == '':
             msg = '%s %02x 00 %s %s %02x' %(head,msg_len,dev_number,command,msg_sum)
         else:
